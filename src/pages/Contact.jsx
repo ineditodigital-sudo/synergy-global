@@ -27,22 +27,61 @@ export default function Contact() {
           <div className="space-y-12">
             <div className="group">
               <h3 className="font-sans text-[10px] tracking-[0.4em] uppercase text-sand mb-4">Direct Email</h3>
-              <div className="mb-4">
-                <a href={`mailto:${contact.info.email}`} className="font-body text-2xl hover:text-sand transition-colors break-all">
-                  {contact.info.email}
-                </a>
+              <div className="flex flex-col gap-3">
+                {(contact.info?.email || '').split(',').map((email, idx) => {
+                  const cleanEmail = email.trim();
+                  if (!cleanEmail) return null;
+                  return (
+                    <div key={idx}>
+                      <a href={`mailto:${cleanEmail}`} className="font-body text-2xl hover:text-sand transition-colors break-all">
+                        {cleanEmail}
+                      </a>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
             <div>
-              <h3 className="font-sans text-[10px] tracking-[0.4em] uppercase text-sand mb-4">Global Offices</h3>
+              <h3 className="font-sans text-[10px] tracking-[0.4em] uppercase text-sand mb-4">Global Headquarters</h3>
               <div className="space-y-8">
-                <div>
-                  <h4 className="font-sans text-[11px] tracking-widest uppercase mb-2">{contact.info.country}</h4>
-                  <p className="font-body text-2xl leading-relaxed">
-                    {contact.info.office}<br />
-                    {contact.info.country}
-                  </p>
+                {/* SF Location Card */}
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-sand/10 flex items-center justify-center flex-shrink-0 mt-1">
+                    <MapPin size={18} className="text-sand" />
+                  </div>
+                  <div>
+                    <p className="font-heading text-3xl text-sage leading-tight">San Francisco</p>
+                    <p className="font-sans text-[11px] tracking-widest uppercase text-sand mt-1">California, United States</p>
+                    <p className="font-sans font-light text-sm text-sage/50 mt-3 leading-relaxed">
+                      Our principal office and global operations hub,<br />
+                      serving international clients and partners.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Embedded Map */}
+                <div className="w-full h-52 overflow-hidden border border-sand/20 relative group">
+                  <iframe
+                    title="Synergy Global — San Francisco HQ"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d100939.98443948298!2d-122.50764017948198!3d37.75781499772775!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80859a6d00690021%3A0x4a501367f076adff!2sSan%20Francisco%2C%20CA!5e0!3m2!1sen!2sus!4v1748217600000!5m2!1sen!2sus"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0, filter: 'grayscale(80%) contrast(1.1)' }}
+                    allowFullScreen=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                  <a
+                    href="https://maps.google.com/?q=San+Francisco,+CA"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute inset-0 flex items-end justify-end p-3 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <span className="bg-charcoal text-bone text-[9px] tracking-widest uppercase px-3 py-2">
+                      Open in Maps ↗
+                    </span>
+                  </a>
                 </div>
               </div>
             </div>

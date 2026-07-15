@@ -1,0 +1,22 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Preserve the Authorization header so PHP can read the admin Bearer token
+  # (some Apache/FastCGI setups strip it otherwise).
+  RewriteCond %{HTTP:Authorization} .
+  RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  # We do NOT include !-d so that routes matching directory names (like /services) are passed to React
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# Block direct web access to sensitive backend files
+<FilesMatch "^(config\.php|config\.example\.php|generate_hash\.php)$">
+  Require all denied
+</FilesMatch>
+
+# Disable directory listing just in case
+Options -Indexes

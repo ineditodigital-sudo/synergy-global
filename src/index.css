@@ -45,6 +45,13 @@
 
   /* Legacy mapping for quick transition */
   --font-serif: 'Montserrat', sans-serif;
+
+  --animate-infinite-scroll: infinite-scroll 120s linear infinite;
+
+  @keyframes infinite-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(-100% - 2rem)); }
+  }
 }
 
 @layer base {
@@ -66,7 +73,7 @@
   pointer-events: none;
   z-index: 9999;
   opacity: 0.05;
-  background-image: url('https://www.transparenttextures.com/patterns/film-grain.png');
+  /* background-image: url('https://www.transparenttextures.com/patterns/film-grain.png'); */
 }
 
 .elegant-border {

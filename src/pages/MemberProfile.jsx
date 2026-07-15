@@ -3,39 +3,18 @@ import { useParams, Link } from 'react-router-dom';
 import { Mail, Globe, ArrowLeft, Users } from 'lucide-react';
 import SEO from '../components/SEO';
 
-const teamData = {
-  'victor-marquez': {
-    name: "Victor M. Marquez",
-    role: "CEO & Founder",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=1200",
-    email: "victor@SynergyGlobalDevelopment.com",
-    bio: "Victor M. Marquez is a highly skilled business and real estate attorney with over 30 years of experience across the U.S., Mexico, and Europe. As a partner at Intelink Law Group, he specializes in real estate transactions, land use, commercial litigation, and cross-border trade. His practice bridges the gap between North American markets, providing institutional-grade counsel to global investors.",
-    specialties: ["Cross-Border Law", "Institutional Real Estate", "Global Trade Policy", "Commercial Litigation"],
-    locations: ["California", "Mexico City", "Madrid"]
-  },
-  'marisol-jimenez': {
-    name: "Marisol Jimenez",
-    role: "Managing Director",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=1200",
-    email: "marisol@SynergyGlobalDevelopment.com",
-    bio: "Specializing in international logistics and supply chain optimization, Marisol leads our global distribution strategies. With a background in cross-border trade, she ensures operational excellence across all manufacturing industries.",
-    specialties: ["Supply Chain Logistics", "Global Distribution", "Trade Optimization", "Operational Excellence"],
-    locations: ["Pan-American Markets", "San Francisco", "Mexico City"]
-  },
-  'roberto-castillo': {
-    name: "Roberto Castillo",
-    role: "Strategic Advisor",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=800",
-    email: "roberto@SynergyGlobalDevelopment.com",
-    bio: "Roberto brings extensive experience in Mexico's real estate development sector. His expertise in land use and commercial litigation provides our clients with a secure foundation for transformative investments.",
-    specialties: ["Real Estate Development", "Land Use Policy", "Strategic Advisory", "Market Intelligence"],
-    locations: ["Mexico", "Phoenix", "Southwest USA"]
-  }
-};
+import { useContent } from '../context/ContentContext';
 
 export default function MemberProfile() {
   const { id } = useParams();
-  const member = teamData[id];
+  const { content } = useContent();
+  const team = content.about?.team || [];
+  
+  // Find member by ID or by generating a slug from name
+  const member = team.find(m => 
+    String(m.id) === id || 
+    m.name.toLowerCase().replace(/\s+/g, '-') === id
+  );
 
   if (!member) {
     return (
@@ -45,6 +24,10 @@ export default function MemberProfile() {
       </div>
     );
   }
+
+  // Ensure default arrays for safety
+  const specialties = member.specialties || [];
+  const locations = member.locations || [];
 
   return (
     <div className="pt-32 pb-24">
@@ -74,15 +57,6 @@ export default function MemberProfile() {
                   <span className="font-sans text-sm">{member.email}</span>
                 </a>
               </div>
-              
-              <div className="flex space-x-6">
-                <a href="#" className="w-12 h-12 rounded-full border border-sand/20 flex items-center justify-center text-sage hover:bg-sand hover:text-bone transition-all">
-                  <Users size={20} strokeWidth={1.5} />
-                </a>
-                <a href="#" className="w-12 h-12 rounded-full border border-sand/20 flex items-center justify-center text-sage hover:bg-sand hover:text-bone transition-all">
-                  <Globe size={20} strokeWidth={1.5} />
-                </a>
-              </div>
             </div>
           </div>
 
@@ -96,16 +70,18 @@ export default function MemberProfile() {
             <div className="h-px w-full bg-sand/20 mb-12"></div>
 
             <div className="prose prose-sage max-w-none">
-              <p className="font-sans font-light text-xl text-sage/80 leading-relaxed mb-12 text-justify">
-                {member.bio}
-              </p>
+              {member.bio.split('\n\n').map((para, i) => (
+                <p key={i} className="font-sans font-light text-xl text-sage/80 leading-relaxed mb-8 text-justify">
+                  {para}
+                </p>
+              ))}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-16 pt-16 border-t border-sand/20">
               <div>
                 <h4 className="font-sans text-[10px] tracking-[0.3em] uppercase text-sand mb-6">Specialties</h4>
                 <ul className="space-y-4">
-                  {member.specialties.map((spec, i) => (
+                  {specialties.map((spec, i) => (
                     <li key={i} className="flex items-center space-x-3 font-sans text-sm text-sage/70">
                       <div className="w-1.5 h-1.5 bg-sand rounded-full"></div>
                       <span>{spec}</span>
@@ -116,7 +92,7 @@ export default function MemberProfile() {
               <div>
                 <h4 className="font-sans text-[10px] tracking-[0.3em] uppercase text-sand mb-6">Key Markets</h4>
                 <div className="flex flex-wrap gap-3">
-                  {member.locations.map((loc, i) => (
+                  {locations.map((loc, i) => (
                     <span key={i} className="px-4 py-2 bg-bone border border-sand/20 font-sans text-[10px] tracking-widest uppercase text-sage">
                       {loc}
                     </span>

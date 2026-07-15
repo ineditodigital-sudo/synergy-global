@@ -62,14 +62,17 @@ export default function Manifesto() {
 
   return (
     <section ref={sectionRef} className="relative w-full py-24 md:py-48 px-4 md:px-16 bg-[var(--color-bone)] text-[var(--color-sage)] overflow-hidden border-y border-[var(--color-sand)]/20">
-      <div className="absolute inset-0 opacity-10 mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')]"></div>
+      <div className="absolute inset-0 opacity-10 mix-blend-multiply"></div>
       
       <div className="relative z-10 max-w-4xl mx-auto text-center md:text-left flex flex-col items-center md:items-start">
         <div className="w-12 h-px bg-[var(--color-sand)] mb-8 md:mb-12"></div>
         <h2 className="font-sans font-light text-xl md:text-4xl lg:text-5xl mb-8 md:mb-12 leading-relaxed text-[var(--color-sand)]">
           <div ref={textRef1}>{manifesto.title}</div>
         </h2>
-        <h2 className="font-heading italic text-4xl md:text-5xl lg:text-6xl leading-tight text-[var(--color-sage)]">
+        <h2 
+          className="font-heading italic leading-tight text-[var(--color-sage)]"
+          style={{ fontSize: content.style?.typography?.manifestoBodySize ? `${content.style.typography.manifestoBodySize}px` : '24px' }}
+        >
           <div ref={textRef2}>{manifesto.subtitle}</div>
         </h2>
       </div>

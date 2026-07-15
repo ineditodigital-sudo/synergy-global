@@ -3,9 +3,8 @@ import Hero from '../components/Hero';
 import TrackRecord from '../components/TrackRecord';
 import PortfolioShowcase from '../components/PortfolioShowcase';
 import Manifesto from '../components/Manifesto';
-import ValueInteractions from '../components/ValueInteractions';
-import PropertyValuation from '../components/PropertyValuation';
 import TeamCarousel from '../components/TeamCarousel';
+import ImageGalleryCarousel from '../components/ImageGalleryCarousel';
 
 import SEO from '../components/SEO';
 
@@ -20,8 +19,7 @@ export default function Home() {
       <TrackRecord />
       <PortfolioShowcase />
       <Manifesto />
-      <PropertyValuation />
-      <ValueInteractions />
+      <ImageGalleryCarousel title="Gallery" />
       <TeamCarousel />
     </>
   );

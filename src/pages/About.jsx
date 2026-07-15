@@ -1,6 +1,7 @@
 import React from 'react';
 import SEO from '../components/SEO';
-import TeamMemberCard from '../components/TeamMemberCard';
+import TeamCarousel from '../components/TeamCarousel';
+import ImageGalleryCarousel from '../components/ImageGalleryCarousel';
 import { useContent } from '../context/ContentContext';
 
 export default function About() {
@@ -42,25 +43,10 @@ export default function About() {
       </section>
 
       {/* Leadership Grid */}
-      <section className="px-6 md:px-16 py-32 bg-charcoal text-bone">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
-            <div className="max-w-2xl">
-              <h2 className="font-sans font-light tracking-[0.3em] text-xs uppercase text-sand mb-6">Our Leadership</h2>
-              <h3 className="font-heading text-4xl md:text-5xl text-white">The Minds Behind the Vision.</h3>
-            </div>
-            <p className="font-sans font-light text-bone/60 max-w-xs">
-              Directing global strategy with precision, integrity, and decades of cross-market expertise.
-            </p>
-          </div>
+      <TeamCarousel />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-            {Array.isArray(safeAbout.team) && safeAbout.team.map((member, index) => (
-              <TeamMemberCard key={index} member={member} />
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Press & Media Gallery */}
+      <ImageGalleryCarousel title="Press & Media" />
       
       {/* Value Statement */}
       <section className="py-32 px-6 md:px-16 text-center">

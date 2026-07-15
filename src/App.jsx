@@ -18,7 +18,10 @@ import PropertyDetail from './pages/PropertyDetail';
 
 // Service Detail Pages
 import SupplyChain from './pages/services/SupplyChain';
-import RealEstate from './pages/services/RealEstate';
+import TradeInvestment from './pages/services/TradeInvestment';
+import InvestorRepresentation from './pages/services/InvestorRepresentation';
+import CorporateFormation from './pages/services/CorporateFormation';
+import BusinessAdvocacy from './pages/services/BusinessAdvocacy';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -85,11 +88,32 @@ function CustomCursor() {
 import AdminDashboard from './pages/admin/AdminDashboard';
 import './admin.css';
 
+import { useContent } from './context/ContentContext';
+
 function AppContent() {
+  const { content } = useContent();
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
   const isPreview = new URLSearchParams(location.search).get('preview') === 'true';
   const hideGlobalUI = isAdmin || isPreview;
+
+  // Apply Global Styles from Content
+  useEffect(() => {
+    const styles = content.style || {};
+    const colors = styles.colors || { primary: '#C6B7A0', secondary: '#2C3E35', accent: '#E5DED4' };
+    const typography = styles.typography || { heading: 'Alata', body: 'Montserrat', headingSize: 48, bodySize: 16 };
+
+    const root = document.documentElement;
+    root.style.setProperty('--color-primary', colors.primary || '#C6B7A0');
+    root.style.setProperty('--color-secondary', colors.secondary || '#2C3E35');
+    root.style.setProperty('--color-accent', colors.accent || '#E5DED4');
+    root.style.setProperty('--font-heading', typography.heading || 'Alata');
+    root.style.setProperty('--font-body', typography.body || 'Montserrat');
+    root.style.setProperty('--font-size-heading-base', `${typography.headingSize || 48}px`);
+    root.style.setProperty('--font-size-body-base', `${typography.bodySize || 16}px`);
+    root.style.setProperty('--logo-size', `${styles.logoSize || 100}px`);
+    root.style.setProperty('--admin-logo-size', `${styles.adminLogoSize || 100}px`);
+  }, [content.style]);
 
   return (
     <div className={`relative w-full min-h-screen ${isAdmin ? 'bg-white' : 'bg-bone'} flex flex-col`}>
@@ -106,9 +130,13 @@ function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/mission" element={<Mission />} />
           <Route path="/about" element={<About />} />
+          <Route path="/team" element={<About />} />
           <Route path="/services" element={<Services />} />
           <Route path="/services/supply-chain" element={<SupplyChain />} />
-          <Route path="/services/real-estate" element={<RealEstate />} />
+          <Route path="/services/trade-investment" element={<TradeInvestment />} />
+          <Route path="/services/investor-representation" element={<InvestorRepresentation />} />
+          <Route path="/services/corporate-formation" element={<CorporateFormation />} />
+          <Route path="/services/business-advocacy" element={<BusinessAdvocacy />} />
           <Route path="/partnerships" element={<Partnerships />} />
           <Route path="/legal" element={<Legal />} />
           <Route path="/portfolio" element={<Portfolio />} />

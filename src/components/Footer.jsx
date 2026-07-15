@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Globe, Mail } from 'lucide-react';
+import { Globe, Mail, MapPin } from 'lucide-react';
 import logoWhite from '../assets/brand/logo-horizontal-white.png';
 
 export default function Footer() {
@@ -51,15 +51,18 @@ export default function Footer() {
 
           {/* Contact Column */}
           <div>
-            <h4 className="font-sans text-[10px] tracking-[0.4em] uppercase text-sand mb-8">Global HQ</h4>
-            <div className="space-y-6 font-sans font-light text-sm text-bone/60">
-              <p className="leading-relaxed">
-                San Francisco, CA<br />
-                United States
-              </p>
+            <h4 className="font-sans text-[10px] tracking-[0.4em] uppercase text-sand mb-8">Headquarters</h4>
+            <div className="space-y-6">
+              <div className="flex items-start gap-3">
+                <MapPin size={14} className="text-sand mt-1 flex-shrink-0" />
+                <div>
+                  <p className="font-sans font-semibold text-sm text-bone leading-tight">San Francisco, CA</p>
+                  <p className="font-sans font-light text-xs text-bone/50 mt-1">United States</p>
+                </div>
+              </div>
               <div className="flex flex-col space-y-2">
                 <a href="mailto:info@SynergyGlobalDevelopment.com" className="text-sand hover:text-white transition-colors text-[10px] tracking-widest uppercase">info@SynergyGlobalDevelopment.com</a>
-                <span className="flex items-center gap-2 text-[9px] tracking-widest uppercase"><Globe size={10} /> Worldwide Presence</span>
+                <span className="flex items-center gap-2 text-[9px] tracking-widest uppercase text-bone/40"><Globe size={10} /> Worldwide Presence</span>
               </div>
             </div>
           </div>

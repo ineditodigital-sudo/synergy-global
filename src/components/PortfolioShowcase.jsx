@@ -11,25 +11,25 @@ export default function PortfolioShowcase() {
 
   const portfolioItems = [
     {
-      title: "The Zenith Estate",
-      location: "Paradise Valley, AZ",
-      details: "7 BD | 9 BA | 12,400 Sq. Ft.",
-      status: "For Sale",
-      image: "/portfolio/zenith.png"
+      title: "176 Randall Street",
+      location: "San Francisco, CA",
+      details: "2 Townhomes | Private Elevator | 4,600 Sq. Ft.",
+      status: "Active Listing",
+      image: "/portfolio/prop1.jpg"
     },
     {
-      title: "Calle de las Brisas",
-      location: "Scottsdale, AZ",
-      details: "4 BD | 6 BA | 9,712 Sq. Ft.",
-      status: "Active Under Contract",
-      image: "/portfolio/brisas.png"
-    },
-    {
-      title: "Vaquero Drive",
-      location: "Scottsdale, AZ",
-      details: "7 BD | 8 BA | 9,599 Sq. Ft.",
+      title: "The Pacific Heights Residence",
+      location: "Pacific Heights, San Francisco, CA",
+      details: "5 BD | 6 BA | 6,800 Sq. Ft.",
       status: "Sold",
-      image: "/portfolio/vaquero.png"
+      image: "/portfolio/prop2.jpg"
+    },
+    {
+      title: "Twin Peaks Penthouse",
+      location: "Twin Peaks, San Francisco, CA",
+      details: "3 BD | 4 BA | 3,200 Sq. Ft.",
+      status: "Active Under Contract",
+      image: "/portfolio/prop3.jpg"
     }
   ];
 
@@ -100,7 +100,7 @@ export default function PortfolioShowcase() {
               ))}
             </div>
 
-            <Link to="/portfolio" className="mt-12 text-[9px] font-sans tracking-[0.3em] uppercase border-b border-sand pb-2 text-sand hover:text-white hover:border-white transition-colors">
+            <Link to="/portfolio" className="mt-12 px-8 py-3 border border-sand/50 text-[9px] font-sans tracking-[0.3em] uppercase text-sand hover:bg-sand hover:text-charcoal transition-all duration-500">
               View Private Listing
             </Link>
           </div>

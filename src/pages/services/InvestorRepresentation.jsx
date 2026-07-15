@@ -4,7 +4,7 @@ import { Home, Building2, Map, Layout, MoveRight, CheckCircle2, TrendingUp } fro
 import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
 
-export default function RealEstate() {
+export default function InvestorRepresentation() {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export default function RealEstate() {
   return (
     <div ref={containerRef} className="bg-bone min-h-screen text-sage">
       <SEO 
-        title="Real Estate & Industrial Development" 
+        title="Investor Representation" 
         description="High-end real estate development and institutional investment representation." 
       />
 
@@ -78,7 +78,7 @@ export default function RealEstate() {
         {/* Parallax Background */}
         <div className="absolute inset-0 w-full h-full">
           <img 
-            src="/services/real-estate.png" 
+            src="https://images.unsplash.com/photo-1575454645229-7685ce04e6c3?auto=format&fit=crop&q=80&w=2000" 
             alt="Real Estate" 
             className="hero-image absolute inset-0 w-full h-[120%] object-cover opacity-60 scale-110"
           />
@@ -92,8 +92,8 @@ export default function RealEstate() {
               Institutional Asset Management
             </span>
             <h1 className="hero-title font-heading text-5xl md:text-7xl lg:text-8xl text-white leading-[0.95] mb-8">
-              Real <br />
-              <span className="italic text-sand ml-0 md:ml-16">Estate.</span>
+              Investor <br />
+              <span className="italic text-sand ml-0 md:ml-16">Representation.</span>
             </h1>
             <div className="hero-line w-24 h-px bg-sand/40 mb-8 origin-left"></div>
             <p className="hero-desc font-sans font-light text-lg md:text-xl text-bone/60 max-w-xl leading-relaxed italic">
@@ -132,7 +132,7 @@ export default function RealEstate() {
           
           <div className="relative aspect-[4/5] overflow-hidden border border-sand/20 animate-up shadow-2xl">
             <img 
-              src="/portfolio/zenith.png" 
+              src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800" 
               alt="Luxury Project" 
               className="w-full h-full object-cover"
             />

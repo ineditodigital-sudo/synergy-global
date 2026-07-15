@@ -46,12 +46,12 @@ export default function SupplyChain() {
   const capabilities = [
     {
       title: "Strategic Sourcing",
-      desc: "Identifying and vetting high-tier manufacturers and suppliers across the North American corridor.",
+      desc: "Identifying and vetting high-tier manufacturers and suppliers across the global corridor.",
       icon: <Package size={24} />
     },
     {
       title: "Cross-Border Logistics",
-      desc: "Seamless distribution networks ensuring efficient flow of goods between Mexico, USA, and Canada.",
+      desc: "Seamless distribution networks ensuring efficient flow of goods across international borders.",
       icon: <Truck size={24} />
     },
     {
@@ -89,7 +89,7 @@ export default function SupplyChain() {
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-16 w-full text-center md:text-left pt-20 md:pt-32">
           <div className="max-w-4xl">
             <span className="hero-tag inline-block font-sans font-light tracking-[0.6em] text-[9px] uppercase text-sand mb-6">
-              North American Logistics
+              Global Logistics
             </span>
             <h1 className="hero-title font-heading text-5xl md:text-7xl lg:text-8xl text-white leading-[0.95] mb-8">
               Supply <br />

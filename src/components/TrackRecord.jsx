@@ -1,80 +1,80 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
 
 import { useContent } from '../context/ContentContext';
 
-export default function TrackRecord() {
-  const { content } = useContent();
-  const metrics = content.home?.metrics || {
-    items: [
-      { label: 'Total AUM', value: '$2.4B' },
-      { label: 'Track Record', value: '15+' },
-      { label: 'Projects', value: '450+' },
-      { label: 'Markets', value: '12' }
-    ]
-  };
-  const stats = metrics.items || [];
-  const sectionRef = useRef(null);
+const DEFAULT_METRICS = [
+  { label: 'Total AUM', value: '$2.4B' },
+  { label: 'Track Record', value: '15+' },
+  { label: 'Projects', value: '450+' },
+  { label: 'Markets', value: '12' }
+];
+
+// Self-contained count-up: pure React + requestAnimationFrame.
+// Re-counts whenever the target changes and ALWAYS ends exactly on target.
+function StatNumber({ stat }) {
+  const raw = String(stat.value ?? '');
+  const prefix = raw.startsWith('$') ? '$' : '';
+  const suffix = raw.endsWith('B') ? 'B' : (stat.suffix || '');
+  const num = raw.replace(/[^0-9.]/g, '');
+  const target = parseFloat(num) || 0;
+  const decimals = (num.split('.')[1] || '').length;
+  const [n, setN] = useState(0);
 
   useEffect(() => {
+    let raf;
+    let startT = null;
+    const duration = 1400;
+    const step = (t) => {
+      if (startT === null) startT = t;
+      const p = Math.min((t - startT) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 2);
+      setN(target * eased);
+      if (p < 1) raf = requestAnimationFrame(step);
+      else setN(target);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [target]);
+
+  return (
+    <span className="font-display text-6xl md:text-6xl text-sage mb-4 block">
+      {prefix + n.toFixed(decimals) + suffix}
+    </span>
+  );
+}
+
+export default function TrackRecord() {
+  const { content } = useContent();
+  const metrics = content.home?.metrics || { items: DEFAULT_METRICS };
+  const stats = metrics.items || [];
+  const sectionRef = useRef(null);
+  const statsKey = JSON.stringify(stats);
+
+  // Entrance fade only (opacity/position). clearProps hands control back to React.
+  useEffect(() => {
     if (!sectionRef.current) return;
-
-    let ctx = gsap.context(() => {
-      const q = gsap.utils.selector(sectionRef.current);
-      
-      gsap.from(q(".stat-item"), {
+    const ctx = gsap.context(() => {
+      gsap.from(gsap.utils.selector(sectionRef.current)('.stat-item'), {
         opacity: 0,
-        y: 30,
-        stagger: 0.2,
-        duration: 1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-        }
-      });
-
-      const statNumbers = q(".stat-number");
-      stats.forEach((stat, i) => {
-        const el = statNumbers[i];
-        if (!el) return;
-        
-        const val = parseFloat(stat.value.replace(/[^0-9.]/g, '')) || 0;
-        const obj = { n: 0 };
-        
-        gsap.to(obj, {
-          n: val,
-          duration: 2,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 80%",
-          },
-          onUpdate: () => {
-            if (!el) return;
-            const prefix = stat.value.startsWith('$') ? '$' : '';
-            const suffix = stat.value.endsWith('B') ? 'B' : (stat.suffix || '');
-            el.innerHTML = prefix + obj.n.toFixed(i === 3 ? 1 : 0) + suffix;
-          }
-        });
+        y: 24,
+        stagger: 0.12,
+        duration: 0.7,
+        ease: 'power2.out',
+        clearProps: 'all'
       });
     }, sectionRef);
     return () => ctx.revert();
-  }, []);
+  }, [statsKey]);
 
   return (
     <section ref={sectionRef} className="py-24 bg-bone border-y border-sand/20">
       <div className="max-w-7xl mx-auto px-6 md:px-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-8">
+        <div className="flex flex-wrap justify-center gap-x-10 gap-y-14 md:gap-x-28">
           {stats.map((stat, index) => (
-            <div key={index} className="stat-item text-center flex flex-col items-center">
-              <span className="stat-number font-display text-4xl md:text-6xl text-sage mb-4 block">
-                0
-              </span>
-              <span className="font-sans font-light tracking-[0.2em] text-[10px] md:text-xs uppercase text-sand">
+            <div key={index} className="stat-item text-center flex flex-col items-center min-w-[130px]">
+              <StatNumber stat={stat} />
+              <span className="font-sans font-light tracking-[0.2em] text-[10px] md:text-xs uppercase text-sand text-center max-w-[150px]">
                 {stat.label}
               </span>
             </div>

@@ -3,108 +3,36 @@ import { useParams, Link } from 'react-router-dom';
 import { MapPin, ArrowLeft, CheckCircle, Calendar, Shield, Maximize } from 'lucide-react';
 import SEO from '../components/SEO';
 
-const propertiesData = {
-  'the-glass-house': {
-    title: "The Glass House",
-    location: "Paradise Valley, AZ",
-    price: "$12,500,000",
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2000&q=80",
-    type: "Residential",
-    specs: {
-      beds: "6",
-      baths: "8",
-      sqft: "8,500",
-      lot: "1.2 Acres",
-      year: "2023"
-    },
-    description: "An architectural masterpiece perched on the edge of Camelback Mountain. The Glass House features floor-to-ceiling retractable walls that blur the line between indoor and outdoor living. Designed for the ultimate collector of experiences, this residence offers panoramic views of the entire valley.",
-    features: ["Infinity Edge Pool", "1,500 Bottle Wine Cellar", "Gourmet Chef's Kitchen", "Smart Home Automation", "Private Guest Wing", "Wellness Center & Spa"]
-  },
-  'san-miguel-estate': {
-    title: "San Miguel Estate",
-    location: "Paradise Valley, AZ",
-    price: "$8,900,000",
-    image: "https://images.unsplash.com/photo-1613490908578-f1489e8020b7?auto=format&fit=crop&w=2000&q=80",
-    type: "Residential",
-    specs: {
-      beds: "5",
-      baths: "6",
-      sqft: "7,200",
-      lot: "0.8 Acres",
-      year: "2021"
-    },
-    description: "A modern interpretation of Mediterranean luxury. San Miguel Estate combines timeless materials with avant-garde design. The sprawling grounds feature curated desert landscaping and multiple water features that create a private oasis in the heart of Arizona.",
-    features: ["Courtyard Entrance", "Home Theater", "Outdoor Kitchen", "Guest Casita", "Four-Car Garage", "Solar Integrated"]
-  },
-  'global-logistics-hub': {
-    title: "Global Logistics Hub",
-    location: "Mexico City, MX",
-    price: "Inquiry Only",
-    image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=80",
-    type: "Commercial",
-    specs: {
-      type: "Industrial",
-      sqft: "150,000",
-      dock_doors: "42",
-      clear_height: "36'",
-      parking: "200+ Spaces"
-    },
-    description: "Strategically located to serve the growing North American supply chain. This state-of-the-art logistics facility features high-efficiency cooling systems, reinforced flooring, and advanced security infrastructure. A cornerstone asset for international distribution.",
-    features: ["24/7 Security", "Cross-Dock Configuration", "LED Lighting", "Office Suite", "Fiber Optic Ready", "Direct Highway Access"]
-  },
-  'desert-modernist': {
-    title: "Desert Modernist",
-    location: "Scottsdale, AZ",
-    price: "$6,400,000",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=80",
-    type: "Residential",
-    specs: {
-      beds: "4",
-      baths: "5",
-      sqft: "5,800",
-      lot: "0.6 Acres",
-      year: "2020"
-    },
-    description: "A tribute to mid-century design with contemporary sophistication. The Desert Modernist features clean lines, natural stone accents, and a fluid layout that prioritizes privacy and natural light.",
-    features: ["Floor-to-ceiling Glass", "Custom Millwork", "Private Courtyard", "Home Office", "Outdoor Firepit", "Art Gallery Lighting"]
-  },
-  'urban-development-site': {
-    title: "Urban Development Site",
-    location: "Phoenix, AZ",
-    price: "$15,000,000",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=80",
-    type: "Development",
-    specs: {
-      type: "Mixed-Use",
-      acres: "2.5",
-      zoning: "High-Density",
-      potential_units: "240",
-      frontage: "450'"
-    },
-    description: "A prime opportunity in the heart of the urban core. This 2.5-acre site is shovel-ready for a high-density mixed-use development, offering unparalleled visibility and accessibility.",
-    features: ["Utility Infrastructure in Place", "Zoning Approval", "Phase 1 Environmental Done", "Transit-Oriented Location", "High Walk Score", "Corner Lot"]
-  },
-  'boutique-winery-estate': {
-    title: "Boutique Winery Estate",
-    location: "Napa Valley, CA",
-    price: "Price Upon Request",
-    image: "https://images.unsplash.com/photo-1505881502353-a1986add3762?auto=format&fit=crop&w=2000&q=80",
-    type: "Residential",
-    specs: {
-      beds: "4",
-      baths: "4",
-      acres: "10",
-      vineyard: "6 Acres",
-      production: "1,500 Cases"
-    },
-    description: "An extraordinary blend of luxury living and agricultural heritage. This 10-acre estate features a meticulously designed residence overlooking 6 acres of premium Cabernet Sauvignon vines.",
-    features: ["Private Tasting Room", "Temperature Controlled Storage", "Pool Pavilion", "Olive Grove", "Chef's Garden", "Guest Studio"]
-  }
-};
+import { useContent } from '../context/ContentContext';
 
 export default function PropertyDetail() {
   const { id } = useParams();
-  const property = propertiesData[id];
+  const { content } = useContent();
+  const properties = content.portfolio?.items || [];
+  
+  // Find property by ID or slugified title
+  const property = properties.find(p => 
+    String(p.id) === id || 
+    p.title.toLowerCase().replace(/\s+/g, '-') === id
+  );
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  if (!property) {
+    return (
+      <div className="pt-40 pb-32 text-center">
+        <h1 className="font-heading text-4xl text-sage mb-8">Asset not found</h1>
+        <Link to="/portfolio" className="text-sand underline uppercase tracking-widest text-xs">Back to Portfolio</Link>
+      </div>
+    );
+  }
+
+  // Ensure default structures for safety
+  const specs = property.specs || {};
+  const features = property.features || [];
+  const description = property.description || "No description available.";
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -137,7 +65,7 @@ export default function PropertyDetail() {
           <div className="order-2 lg:order-1">
             <div className="flex items-center gap-4 mb-6">
               <span className="px-4 py-1 border border-sand/30 text-sand text-[9px] tracking-[0.2em] uppercase">{property.type}</span>
-              <span className="text-sage/40 font-sans text-[9px] tracking-[0.2em] uppercase italic">Ref: SG-{id.substring(0, 4).toUpperCase()}</span>
+              <span className="text-sage/40 font-sans text-[9px] tracking-[0.2em] uppercase italic">Ref: SG-{String(property.id).substring(0, 4).toUpperCase()}</span>
             </div>
             <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl text-sage mb-8 leading-tight">
               {property.title}
@@ -147,7 +75,7 @@ export default function PropertyDetail() {
               <span className="font-sans text-lg tracking-widest uppercase">{property.location}</span>
             </div>
             <p className="font-body text-xl text-sage/70 leading-relaxed mb-12 max-w-xl">
-              {property.description}
+              {description}
             </p>
             <div className="flex items-end gap-12 mb-12">
               <div>
@@ -167,12 +95,23 @@ export default function PropertyDetail() {
 
         {/* Specs Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-32 border-y border-sand/20 py-16">
-          {Object.entries(property.specs).map(([key, value]) => (
-            <div key={key}>
-              <span className="font-sans text-[9px] tracking-[0.3em] uppercase text-sand block mb-3">{key.replace('_', ' ')}</span>
-              <span className="font-heading text-xl text-sage uppercase">{value}</span>
-            </div>
-          ))}
+          {typeof specs === 'string' ? (
+            // Handle string format "6 Beds | 8 Baths"
+            specs.split('|').map((spec, i) => (
+              <div key={i}>
+                <span className="font-sans text-[9px] tracking-[0.3em] uppercase text-sand block mb-3">Feature</span>
+                <span className="font-heading text-xl text-sage uppercase">{spec.trim()}</span>
+              </div>
+            ))
+          ) : (
+            // Handle object format { beds: 6, baths: 8 }
+            Object.entries(specs).map(([key, value]) => (
+              <div key={key}>
+                <span className="font-sans text-[9px] tracking-[0.3em] uppercase text-sand block mb-3">{key.replace('_', ' ')}</span>
+                <span className="font-heading text-xl text-sage uppercase">{value}</span>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Features & Amenities */}
@@ -180,7 +119,7 @@ export default function PropertyDetail() {
           <div>
             <h2 className="font-heading text-3xl md:text-4xl text-sage mb-12">Features & <span className="italic">Amenities</span></h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
-              {property.features.map((feature, i) => (
+              {features.map((feature, i) => (
                 <div key={i} className="flex items-center gap-4 group">
                   <CheckCircle size={18} className="text-sand group-hover:text-sage transition-colors" />
                   <span className="font-sans text-sm text-sage/80 tracking-wide">{feature}</span>
@@ -202,26 +141,26 @@ export default function PropertyDetail() {
 
         {/* Project Navigation */}
         <div className="border-t border-sand/20 pt-16 flex justify-between items-center">
-          {Object.keys(propertiesData).indexOf(id) > 0 ? (
+          {properties.indexOf(property) > 0 ? (
             <Link 
-              to={`/portfolio/${Object.keys(propertiesData)[Object.keys(propertiesData).indexOf(id) - 1]}`}
+              to={`/portfolio/${properties[properties.indexOf(property) - 1].title.toLowerCase().replace(/\s+/g, '-')}`}
               className="group flex flex-col items-start"
             >
               <span className="font-sans text-[9px] tracking-[0.3em] uppercase text-sand mb-2">Previous Asset</span>
               <span className="font-heading text-xl text-sage group-hover:text-sand transition-colors">
-                {propertiesData[Object.keys(propertiesData)[Object.keys(propertiesData).indexOf(id) - 1]].title}
+                {properties[properties.indexOf(property) - 1].title}
               </span>
             </Link>
           ) : <div />}
 
-          {Object.keys(propertiesData).indexOf(id) < Object.keys(propertiesData).length - 1 ? (
+          {properties.indexOf(property) < properties.length - 1 ? (
             <Link 
-              to={`/portfolio/${Object.keys(propertiesData)[Object.keys(propertiesData).indexOf(id) + 1]}`}
+              to={`/portfolio/${properties[properties.indexOf(property) + 1].title.toLowerCase().replace(/\s+/g, '-')}`}
               className="group flex flex-col items-end text-right"
             >
               <span className="font-sans text-[9px] tracking-[0.3em] uppercase text-sand mb-2">Next Asset</span>
               <span className="font-heading text-xl text-sage group-hover:text-sand transition-colors">
-                {propertiesData[Object.keys(propertiesData)[Object.keys(propertiesData).indexOf(id) + 1]].title}
+                {properties[properties.indexOf(property) + 1].title}
               </span>
             </Link>
           ) : <div />}

@@ -43,7 +43,7 @@ export default function Mission() {
         description={safeMission.text} 
       />
       
-      <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03]"></div>
 
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="mb-20 text-center md:text-left">
@@ -58,44 +58,62 @@ export default function Mission() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
-          <div className="mission-card bg-white p-12 border border-sand/10 shadow-sm relative group overflow-hidden min-h-[450px] flex flex-col justify-end">
+          <div className="mission-card bg-white p-12 border border-sand/10 shadow-sm relative group overflow-hidden min-h-[450px] flex flex-col justify-between">
             {safeMission.image && (
               <div className="absolute inset-0 z-0">
                 <img src={safeMission.image} className="w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity duration-700 group-hover:scale-110 transition-transform duration-1000" alt="" />
                 <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
               </div>
             )}
-            <div className="absolute top-0 right-0 p-8 text-sand/10 group-hover:text-sand/20 transition-colors z-10">
+            <div className="absolute top-0 right-0 p-8 text-sand/10 group-hover:text-sand/20 transition-colors z-0">
               <Target size={120} strokeWidth={0.5} />
             </div>
+            
+            {/* Top: Icon */}
             <div className="relative z-10">
-              <div className="w-12 h-12 bg-sand/10 flex items-center justify-center mb-8">
+              <div className="w-12 h-12 bg-sand/10 flex items-center justify-center">
                 <Target className="text-sand" size={24} />
               </div>
-              <h3 className="font-sans font-light tracking-[0.3em] text-xs uppercase text-sand mb-6">{safeMission.badge}</h3>
-              <p className="font-body text-2xl md:text-3xl text-sage leading-snug mb-6">
+            </div>
+
+            {/* Bottom: Text */}
+            <div className="relative z-10 mt-8">
+              <h3 className="font-sans font-light tracking-[0.3em] text-xs uppercase text-sand mb-4">{safeMission.badge}</h3>
+              <p 
+                className="font-body text-sage leading-snug mb-6"
+                style={{ fontSize: content.style?.typography?.missionBodySize ? `${content.style.typography.missionBodySize}px` : '18px' }}
+              >
                 {safeMission.text}
               </p>
               <div className="w-10 h-px bg-sand/30"></div>
             </div>
           </div>
 
-          <div className="mission-card bg-charcoal text-bone p-12 border border-white/5 relative group overflow-hidden min-h-[450px] flex flex-col justify-end">
+          <div className="mission-card bg-charcoal text-bone p-12 border border-white/5 relative group overflow-hidden min-h-[450px] flex flex-col justify-between">
             {safeVision.image && (
               <div className="absolute inset-0 z-0">
                 <img src={safeVision.image} className="w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-700 group-hover:scale-110 transition-transform duration-1000" alt="" />
                 <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/60 to-transparent"></div>
               </div>
             )}
-            <div className="absolute top-0 right-0 p-8 text-white/5 group-hover:text-white/10 transition-colors z-10">
+            <div className="absolute top-0 right-0 p-8 text-white/5 group-hover:text-white/10 transition-colors z-0">
               <Eye size={120} strokeWidth={0.5} />
             </div>
+
+            {/* Top: Icon */}
             <div className="relative z-10">
-              <div className="w-12 h-12 bg-white/5 flex items-center justify-center mb-8">
+              <div className="w-12 h-12 bg-white/5 flex items-center justify-center">
                 <Eye className="text-sand" size={24} />
               </div>
-              <h3 className="font-sans font-light tracking-[0.3em] text-xs uppercase text-sand mb-6">{safeVision.badge}</h3>
-              <p className="font-body text-2xl md:text-3xl leading-snug mb-6">
+            </div>
+
+            {/* Bottom: Text */}
+            <div className="relative z-10 mt-8">
+              <h3 className="font-sans font-light tracking-[0.3em] text-xs uppercase text-sand mb-4">{safeVision.badge}</h3>
+              <p 
+                className="font-body leading-snug mb-6 text-bone"
+                style={{ fontSize: content.style?.typography?.missionBodySize ? `${content.style.typography.missionBodySize}px` : '18px' }}
+              >
                 {safeVision.text}
               </p>
               <div className="w-10 h-px bg-sand/30"></div>

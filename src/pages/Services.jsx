@@ -33,9 +33,22 @@ export default function Services() {
   };
 
   const getLink = (title) => {
-    if (title.toLowerCase().includes('real estate')) return '/services/real-estate';
-    if (title.toLowerCase().includes('supply chain')) return '/services/supply-chain';
+    const t = title.toLowerCase();
+    if (t.includes('supply chain')) return '/services/supply-chain';
+    if (t.includes('trade')) return '/services/trade-investment';
+    if (t.includes('investor')) return '/services/investor-representation';
+    if (t.includes('corporate')) return '/services/corporate-formation';
+    if (t.includes('advocacy')) return '/services/business-advocacy';
     return '/legal';
+  };
+
+  const getFallbackImage = (index) => {
+    const fallbacks = [
+      '/services/service1_new.png',
+      '/services/service2_new.png',
+      '/services/service3_new.png'
+    ];
+    return fallbacks[index % 3];
   };
 
   return (
@@ -48,9 +61,14 @@ export default function Services() {
       <div className="max-w-7xl mx-auto px-4 md:px-12">
         <div className="mb-24 text-center max-w-2xl mx-auto">
           <h1 className="font-sans font-light tracking-[0.4em] text-[10px] uppercase text-sand mb-6">{services.header.badge}</h1>
-          <h2 className="font-heading text-4xl md:text-5xl text-sage mb-8">
+          <h2 className="font-heading text-4xl md:text-5xl text-sage mb-6">
             {services.header.title}
           </h2>
+          {services.header.subtitle && (
+            <p className="font-sans text-xl text-sage/80 mb-8 font-light italic">
+              {services.header.subtitle}
+            </p>
+          )}
           <div className="w-12 h-px bg-sand mx-auto"></div>
         </div>
 
@@ -83,7 +101,7 @@ export default function Services() {
 
               <div className="relative mt-auto aspect-[16/10] overflow-hidden rounded-sm bg-bone border border-sand/20">
                 <img 
-                  src={pillar.image || `https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&q=80&w=400`} 
+                  src={pillar.image || getFallbackImage(index)} 
                   alt={pillar.title}
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out opacity-100"
                 />
