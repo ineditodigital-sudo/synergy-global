@@ -21,21 +21,27 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sln
-# Custom
-deploy_synergy.ps1
+# Custom (deploy_synergy.ps1 holds no credentials: they come from env vars)
 .env
-*.ps1
 
 # Secrets & server-side config (NEVER commit)
+public/app/config.php
 public/config.php
 config.php
 
 # Deploy / server-generated artifacts
 deploy.zip
+deploy_*.php
 unzip.php
 public/uploads/
+public/data/
+dist/data/
+dist/uploads/
+.local-data/
+_backups/
 
 # Test / debug leftovers
 temp_test*
 current_content.json
 info.php
+public/app/seed-content.json

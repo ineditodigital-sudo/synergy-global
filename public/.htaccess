@@ -1,22 +1,60 @@
+# Synergy Global — Apache configuration
+
+Options -Indexes
+# Serve /services, /portfolio, /team... as pages even if a folder has that name.
+DirectorySlash Off
+DirectoryIndex index.php index.html
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
 
-  # Preserve the Authorization header so PHP can read the admin Bearer token
-  # (some Apache/FastCGI setups strip it otherwise).
+  # Let PHP read the admin session token (some FastCGI setups strip it).
   RewriteCond %{HTTP:Authorization} .
   RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-  RewriteRule ^index\.html$ - [L]
-  RewriteCond %{REQUEST_FILENAME} !-f
-  # We do NOT include !-d so that routes matching directory names (like /services) are passed to React
-  RewriteRule . /index.html [L]
+  # Private folders and files are never served.
+  RewriteRule ^(app|data)(/|$) - [F,L]
+  RewriteRule (^|/)\.(?!well-known/) - [F,L]
+  RewriteRule ^(config|config\.example|generate_hash|info|unzip)\.php$ - [F,L]
+
+  # Dynamic robots.txt and sitemap.xml (they follow the CMS settings).
+  RewriteRule ^robots\.txt$ robots.php [L]
+  RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
+  # Existing files are served as-is.
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  # A missing image, script or document is a real 404, not a web page.
+  RewriteCond %{REQUEST_URI} \.(js|mjs|css|map|png|jpe?g|webp|avif|gif|svg|ico|mp4|webm|mov|woff2?|ttf|otf|pdf|json|txt|zip)$ [NC]
+  RewriteRule ^ - [R=404,L]
+
+  # Every other address is a page of the site.
+  RewriteRule ^ index.php [L]
 </IfModule>
 
-# Block direct web access to sensitive backend files
-<FilesMatch "^(config\.php|config\.example\.php|generate_hash\.php)$">
-  Require all denied
-</FilesMatch>
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 
-# Disable directory listing just in case
-Options -Indexes
+  # Build files, optimized images and uploads have unique names: cache for a year.
+  <If "%{REQUEST_URI} =~ m#^/(assets|img|uploads)/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+  <FilesMatch "^(favicon.*|apple-touch-icon\.png|site\.webmanifest)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript application/json application/xml image/svg+xml application/manifest+json
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+  AddType image/webp .webp
+  AddType font/woff2 .woff2
+</IfModule>

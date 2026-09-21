@@ -1,85 +1,76 @@
-import React, { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
+import { useEffect, useRef, useState } from 'react';
+import { useContent } from '../content/context.js';
+import { reducedMotion } from '../lib/gsap.js';
 
-import { useContent } from '../context/ContentContext';
-
-const DEFAULT_METRICS = [
-  { label: 'Total AUM', value: '$2.4B' },
-  { label: 'Track Record', value: '15+' },
-  { label: 'Projects', value: '450+' },
-  { label: 'Markets', value: '12' }
-];
-
-// Self-contained count-up: pure React + requestAnimationFrame.
-// Re-counts whenever the target changes and ALWAYS ends exactly on target.
-function StatNumber({ stat }) {
-  const raw = String(stat.value ?? '');
-  const prefix = raw.startsWith('$') ? '$' : '';
-  const suffix = raw.endsWith('B') ? 'B' : (stat.suffix || '');
-  const num = raw.replace(/[^0-9.]/g, '');
-  const target = parseFloat(num) || 0;
-  const decimals = (num.split('.')[1] || '').length;
+/** Counts up to the number once the section scrolls into view. */
+function StatNumber({ stat, start }) {
+  const raw = String(stat.value ?? '').trim();
+  const numeric = /^[\d,.]+$/.test(raw);
+  const target = numeric ? parseFloat(raw.replace(/,/g, '')) || 0 : 0;
+  const decimals = numeric ? (raw.split('.')[1] || '').length : 0;
   const [n, setN] = useState(0);
+  const animate = numeric && start && !reducedMotion();
 
   useEffect(() => {
+    if (!animate) return undefined;
     let raf;
-    let startT = null;
-    const duration = 1400;
+    let t0 = null;
     const step = (t) => {
-      if (startT === null) startT = t;
-      const p = Math.min((t - startT) / duration, 1);
-      const eased = 1 - Math.pow(1 - p, 2);
-      setN(target * eased);
+      if (t0 === null) t0 = t;
+      const p = Math.min((t - t0) / 1400, 1);
+      setN(target * (1 - (1 - p) ** 2));
       if (p < 1) raf = requestAnimationFrame(step);
-      else setN(target);
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [target]);
+  }, [animate, target]);
 
+  const shown = !numeric ? raw : animate ? n.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) : raw;
   return (
-    <span className="font-display text-6xl md:text-6xl text-sage mb-4 block">
-      {prefix + n.toFixed(decimals) + suffix}
+    <span className="font-display text-6xl text-sage mb-4 block tabular-nums">
+      {stat.prefix}
+      {shown}
+      {stat.suffix}
     </span>
   );
 }
 
 export default function TrackRecord() {
-  const { content } = useContent();
-  const metrics = content.home?.metrics || { items: DEFAULT_METRICS };
-  const stats = metrics.items || [];
-  const sectionRef = useRef(null);
-  const statsKey = JSON.stringify(stats);
+  const { home } = useContent();
+  const stats = home.metrics.items.filter((s) => s.value || s.label);
+  const ref = useRef(null);
+  const [inView, setInView] = useState(() => typeof IntersectionObserver === 'undefined');
 
-  // Entrance fade only (opacity/position). clearProps hands control back to React.
   useEffect(() => {
-    if (!sectionRef.current) return;
-    const ctx = gsap.context(() => {
-      gsap.from(gsap.utils.selector(sectionRef.current)('.stat-item'), {
-        opacity: 0,
-        y: 24,
-        stagger: 0.12,
-        duration: 0.7,
-        ease: 'power2.out',
-        clearProps: 'all'
-      });
-    }, sectionRef);
-    return () => ctx.revert();
-  }, [statsKey]);
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.3 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [stats.length]);
 
+  if (!home.metrics.visible || !stats.length) return null;
   return (
-    <section ref={sectionRef} className="py-24 bg-bone border-y border-sand/20">
+    <section ref={ref} className="py-24 bg-bone border-y border-sand/20" aria-label="Key figures">
       <div className="max-w-7xl mx-auto px-6 md:px-16">
-        <div className="flex flex-wrap justify-center gap-x-10 gap-y-14 md:gap-x-28">
-          {stats.map((stat, index) => (
-            <div key={index} className="stat-item text-center flex flex-col items-center min-w-[130px]">
-              <StatNumber stat={stat} />
-              <span className="font-sans font-light tracking-[0.2em] text-[10px] md:text-xs uppercase text-sand text-center max-w-[150px]">
+        <ul className="flex flex-wrap justify-center gap-x-10 gap-y-14 md:gap-x-28">
+          {stats.map((stat) => (
+            <li key={stat.id} className="text-center flex flex-col items-center min-w-[130px]">
+              <StatNumber stat={stat} start={inView} />
+              <span className="font-sans font-light tracking-[0.2em] text-[10px] md:text-xs uppercase text-sand text-center max-w-[160px]">
                 {stat.label}
               </span>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );
