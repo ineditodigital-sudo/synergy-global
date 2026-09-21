@@ -48,7 +48,7 @@ $FtpHost = $FtpHost -replace '^(ftps?://)', '' -replace '/+$', ''
 # ---------------------------------------------------------------------- build
 if (-not $SkipBuild) {
     Say 'Building the site...' 'Cyan'
-    & npm run build
+    & npm.cmd run build
     if ($LASTEXITCODE -ne 0) { Fail 'Build failed. Nothing was uploaded.' }
 }
 $dist = Join-Path $root 'dist'
