@@ -27,7 +27,11 @@ export function saveSession(session) {
 export async function api(action, { method = 'GET', body, token, form, query = {}, timeout = 60_000 } = {}) {
   const params = new URLSearchParams({ ...(action ? { action } : {}), ...query, t: String(Date.now()) });
   const headers = {};
-  if (token) headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+    // Some hosts strip Authorization before PHP sees it; this one always arrives.
+    headers['X-Synergy-Token'] = token;
+  }
   let payload;
   if (form) payload = form;
   else if (body !== undefined) {

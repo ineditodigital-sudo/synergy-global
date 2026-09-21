@@ -58,13 +58,19 @@ export default function AdminProvider({ children }) {
 
   const login = useCallback(async (password) => {
     const res = await api('login', { method: 'POST', body: { password } });
-    if (res.ok) {
-      const s = { token: res.token, expires: res.expires };
-      saveSession(s);
-      setSession(s);
-      setSessionExpired(false);
+    if (!res.ok) return res;
+    // Confirm the server accepts the new session before closing any dialog,
+    // so a hosting problem shows a clear message instead of a login loop.
+    const check = await api('session', { token: res.token });
+    if (!check.ok) {
+      return { ok: false, status: check.status, error: check.status === 401 ? 'token-rejected' : check.error };
     }
-    return res;
+    const s = { token: check.token || res.token, expires: check.expires || res.expires };
+    saveSession(s);
+    setSession(s);
+    setSessionExpired(false);
+    if (check.uploadLimit) setUploadLimit(check.uploadLimit);
+    return { ok: true };
   }, []);
 
   const logout = useCallback(() => {
@@ -76,12 +82,19 @@ export default function AdminProvider({ children }) {
     setSessionExpired(true);
   }, []);
 
+  // Always use the newest token (it changes after signing in again).
+  const tokenRef = useRef(token);
+  useEffect(() => {
+    tokenRef.current = token;
+  }, [token]);
+  const hasToken = Boolean(token);
+
   // Keep the session alive while the editor is open.
   useEffect(() => {
-    if (!token) return undefined;
+    if (!hasToken) return undefined;
     let cancelled = false;
     const renew = async () => {
-      const res = await api('session', { token });
+      const res = await api('session', { token: tokenRef.current });
       if (cancelled) return;
       if (res.ok) {
         const s = { token: res.token, expires: res.expires };
@@ -98,9 +111,7 @@ export default function AdminProvider({ children }) {
       cancelled = true;
       clearInterval(id);
     };
-    // Renew on login and every 20 minutes, not on every token change.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Boolean(token)]);
+  }, [hasToken]);
 
   /* ----------------------------------------------------------- content */
   const [loadState, setLoadState] = useState('loading');

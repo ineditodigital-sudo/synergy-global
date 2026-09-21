@@ -209,19 +209,39 @@ function sg_valid_token($token)
     return hash_equals($expected, $parts[1]) && (int) $parts[0] > time();
 }
 
+/**
+ * The session token. Many shared hosts strip the Authorization header before
+ * it reaches PHP, so the CMS also sends it in X-Synergy-Token, which always
+ * gets through. Both are accepted.
+ */
 function sg_bearer()
 {
-    $h = $_SERVER['HTTP_AUTHORIZATION'] ?? ($_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '');
-    if (!$h && function_exists('apache_request_headers')) {
-        $all = apache_request_headers();
-        foreach ($all as $k => $v) if (strtolower($k) === 'authorization') $h = $v;
+    $custom = $_SERVER['HTTP_X_SYNERGY_TOKEN'] ?? '';
+    if (is_string($custom) && trim($custom) !== '') return trim($custom);
+
+    $candidates = [$_SERVER['HTTP_AUTHORIZATION'] ?? '', $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? ''];
+    foreach (['getallheaders', 'apache_request_headers'] as $fn) {
+        if (!function_exists($fn)) continue;
+        $all = $fn();
+        if (!is_array($all)) continue;
+        foreach ($all as $k => $v) {
+            $k = strtolower((string) $k);
+            if ($k === 'authorization') $candidates[] = $v;
+            if ($k === 'x-synergy-token' && trim((string) $v) !== '') return trim((string) $v);
+        }
     }
-    return stripos($h, 'Bearer ') === 0 ? trim(substr($h, 7)) : '';
+    foreach ($candidates as $h) {
+        if (is_string($h) && stripos($h, 'Bearer ') === 0) return trim(substr($h, 7));
+    }
+    return '';
 }
 
 function sg_require_auth()
 {
-    if (!sg_valid_token(sg_bearer())) sg_fail(401, 'session-expired');
+    $token = sg_bearer();
+    // Distinct codes help diagnose hosting problems; the CMS treats both as "sign in again".
+    if ($token === '') sg_fail(401, 'no-token');
+    if (!sg_valid_token($token)) sg_fail(401, 'session-expired');
 }
 
 /* --------------------------------------------------------- site helpers */
