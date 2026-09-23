@@ -20,21 +20,30 @@ necesita tocar código.
 | `npm run deploy` | Compila y publica por FTP con verificación y reversión automática. |
 | `npm run set-password -- "nueva-contraseña"` | Cambia la contraseña del CMS (luego `npm run deploy`). |
 | `npm run optimize-assets` | Regenera imágenes WebP, video, favicons y fuentes desde `source-assets/`. |
-| `npm run export:pptx` | Genera en `exports/` un PowerPoint del sitio publicado para que el cliente lo corrija (ver abajo). |
+| `npm run export:pptx` | Genera en `exports/` un PowerPoint en inglés del sitio publicado para que el cliente lo corrija (ver abajo). |
 | `npm run lint` | ESLint. |
 
 ## Revisión del cliente en PowerPoint
 
-`npm run export:pptx` recorre todas las páginas visibles del sitio en vivo y arma una
-presentación: una portada por página y una diapositiva por pantalla, en el orden en que se ve
-al bajar. El diseño queda como fondo; cada texto es un cuadro de texto editable y cada foto,
-logo o ícono es una imagen suelta que se puede reemplazar. El cliente escribe encima, cambia
-fotos y deja comentarios; los cambios se aplican después a mano desde el CMS (el archivo no se
-importa de vuelta).
+`npm run export:pptx` recorre el sitio en vivo y arma una presentación en inglés:
 
-Opciones: `-- --lang en` (guía en inglés), `-- --url http://127.0.0.1:8787` (sitio local),
-`-- --out ruta.pptx`. Necesita Chrome o Edge (o `CHROME_PATH`). Las fuentes del sitio se
-sustituyen por Century Gothic y Calibri, que vienen con Office, ajustando el tamaño para
+1. **Menú, pie de página y empresa:** el menú y el pie tal como se ven, con tablas de sus
+   enlaces; datos de la empresa y redes sociales; logos, colores y tipografías.
+2. **Cada página visible:** una portada y una diapositiva por pantalla, en el orden en que se
+   ve al bajar. El diseño queda como fondo; cada texto es un cuadro editable y cada foto, logo
+   o ícono es una imagen suelta que se puede reemplazar.
+3. **Fichas editables:** una por propiedad (también las ocultas), más una plantilla «New
+   property» para duplicar; equipo con datos de contacto; formulario de contacto y mensajes.
+4. **Todo lo demás:** todas las fotos de la galería y todos los aliados (el carrusel solo
+   muestra algunos), cómo se ve cada página en Google y al compartir el enlace, la página de
+   error y lo que está oculto en el sitio.
+
+El cliente escribe encima, cambia fotos y deja comentarios; los cambios se aplican después a
+mano desde el CMS (el archivo no se importa de vuelta).
+
+Opciones: `-- --lang es` (guía y fichas en español), `-- --url http://127.0.0.1:8787` (sitio
+local), `-- --out ruta.pptx`. Necesita Chrome o Edge (o `CHROME_PATH`). Las fuentes del sitio
+se sustituyen por Century Gothic y Calibri, que vienen con Office, ajustando el tamaño para
 que cada línea corte donde corta en el sitio.
 
 ## Despliegue
