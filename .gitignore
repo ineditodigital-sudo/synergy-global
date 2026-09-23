@@ -45,3 +45,6 @@ temp_test*
 current_content.json
 info.php
 public/app/seed-content.json
+
+# Client review decks (npm run export:pptx)
+exports/
